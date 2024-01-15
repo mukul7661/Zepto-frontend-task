@@ -13,8 +13,10 @@ const ChipInput: React.FC<ChipInputProps> = ({
   const [inputValue, setInputValue] = useState("");
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
-  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  const [focused, setFocused] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  const blurTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     const handleBackspace = (inputEvent: KeyboardEvent) => {
@@ -49,17 +51,27 @@ const ChipInput: React.FC<ChipInputProps> = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
-    setFocusedIndex(null);
+    setFocusedIndex(0);
   };
 
-  const handleItemClick = (item: string, index: number) => {
+  const handleItemClick = (
+    item: string,
+    index: number,
+    getOutOfFocus: boolean
+  ) => {
     const updatedSelectedItems = [...selectedItems, item];
     setSelectedItems(updatedSelectedItems);
     setInputValue("");
+    setHighlightedIndex(null);
     setFocusedIndex(null);
 
     const updatedAvailableItems = availableItems.filter((_, i) => i !== index);
     setAvailableItems(updatedAvailableItems);
+
+    clearTimeout(blurTimeoutRef.current ?? undefined);
+    if (getOutOfFocus) {
+      setFocused(false);
+    } else setFocused(true);
   };
 
   const handleChipRemove = (index: number) => {
@@ -88,7 +100,7 @@ const ChipInput: React.FC<ChipInputProps> = ({
 
   const handleEnterKey = () => {
     if (focusedIndex !== null) {
-      handleItemClick(availableItems[focusedIndex], focusedIndex);
+      handleItemClick(availableItems[focusedIndex], focusedIndex, false);
     }
   };
 
@@ -106,6 +118,17 @@ const ChipInput: React.FC<ChipInputProps> = ({
       default:
         break;
     }
+  };
+
+  const handleFocus = () => {
+    setFocused(true);
+  };
+
+  const handleBlur = () => {
+    // Clear the timeout to prevent hiding the list immediately
+    clearTimeout(blurTimeoutRef.current ?? undefined);
+    // Set a short delay before hiding the list to allow selecting an item
+    blurTimeoutRef.current = window.setTimeout(() => setFocused(false), 200);
   };
 
   return (
@@ -134,24 +157,30 @@ const ChipInput: React.FC<ChipInputProps> = ({
             value={inputValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             placeholder="Type to filter"
             className="input-field"
           />
-          <div className="item-list">
-            {availableItems
-              .filter((item) =>
-                item.toLowerCase().includes(inputValue.toLowerCase())
-              )
-              .map((item, index) => (
-                <div
-                  key={index}
-                  onClick={() => handleItemClick(item, index)}
-                  className={`item ${focusedIndex === index ? "focused" : ""}`}
-                >
-                  {item}
-                </div>
-              ))}
-          </div>
+          {focused && (
+            <div className="item-list">
+              {availableItems
+                .filter((item) =>
+                  item.toLowerCase().includes(inputValue.toLowerCase())
+                )
+                .map((item, index) => (
+                  <div
+                    key={index}
+                    onClick={() => handleItemClick(item, index, true)}
+                    className={`item ${
+                      focusedIndex === index ? "focused" : ""
+                    }`}
+                  >
+                    {item}
+                  </div>
+                ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

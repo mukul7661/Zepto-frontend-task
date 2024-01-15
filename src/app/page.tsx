@@ -11,11 +11,11 @@ export default function Home() {
     "Pradeep kumar",
     "Sharmila yadav",
     "Ranbir singh",
-    "Shubham yadav",
-    "Poonam yadav",
-    "Jai",
-    "Khushi yadav",
-    "Mukul yadav",
+    // "Shubham yadav",
+    // "Poonam yadav",
+    // "Jai",
+    // "Khushi yadav",
+    // "Mukul yadav",
   ]);
   return (
     <div className="App">
