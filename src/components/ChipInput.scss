@@ -1,7 +1,7 @@
 .chip-input {
   display: flex;
   flex-direction: column;
-  width: 600px;
+  width: "full";
 
   .chips {
     display: flex;
@@ -10,26 +10,30 @@
   }
 
   .chip {
-    background-color: #3498db;
-    color: #fff;
-    border-radius: 4px;
-    padding: 4px 8px;
+    background-color: #a6b5bf;
+    color: "black";
+    border-radius: 16px;
+    padding: 2px 10px;
     margin: 4px;
     display: flex;
     align-items: center;
+
+    &.highlighted {
+      background-color: #ffc107;
+    }
 
     .remove-button {
       margin-left: 4px;
       cursor: pointer;
       background: none;
       border: none;
-      color: #fff;
+      color: "black";
     }
   }
 
   .input-field {
-    padding: 8px;
-    margin: 8px 0;
+    padding: 2px 6px;
+    margin: 8px;
     outline: none;
   }
 
@@ -37,11 +41,33 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+    width: 300px;
+    position: absolute;
+    max-height: 200px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #a6b5bf;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: #f1f1f1;
+      border-radius: 4px;
+    }
+
+    border: 1px solid #a6b5bf;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 
     .item {
       cursor: pointer;
       padding: 4px 8px;
-      background-color: #f2f2f2;
+      background-color: "white";
 
       &:hover {
         background-color: #e0e0e0;
