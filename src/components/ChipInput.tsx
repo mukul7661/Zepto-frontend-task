@@ -1,11 +1,13 @@
-import React, { useState, useRef, useEffect, KeyboardEvent } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./ChipInput.scss";
 
 interface ChipInputProps {
   availableItems: string[];
   setAvailableItems: React.Dispatch<React.SetStateAction<string[]>>;
 }
-
+interface KeyboardEvent {
+  key: string;
+}
 const ChipInput: React.FC<ChipInputProps> = ({
   availableItems,
   setAvailableItems,
@@ -16,9 +18,9 @@ const ChipInput: React.FC<ChipInputProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const handleBackspace = (event: KeyboardEvent<HTMLInputElement>) => {
+    const handleBackspace = (inputEvent: KeyboardEvent) => {
       if (
-        event.key === "Backspace" &&
+        inputEvent.key === "Backspace" &&
         inputValue === "" &&
         selectedItems.length > 0
       ) {
