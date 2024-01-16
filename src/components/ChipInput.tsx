@@ -2,8 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import "./ChipInput.scss";
 
 interface ChipInputProps {
-  availableItems: string[];
-  setAvailableItems: React.Dispatch<React.SetStateAction<string[]>>;
+  availableItems: { name: string; email: string; icon: string }[];
+  setAvailableItems: React.Dispatch<
+    React.SetStateAction<{ name: string; email: string; icon: string }[]>
+  >;
 }
 
 const ChipInput: React.FC<ChipInputProps> = ({
@@ -11,7 +13,9 @@ const ChipInput: React.FC<ChipInputProps> = ({
   setAvailableItems,
 }) => {
   const [inputValue, setInputValue] = useState("");
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const [selectedItems, setSelectedItems] = useState<
+    { name: string; email: string; icon: string }[]
+  >([]);
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
   const [focused, setFocused] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(0);
@@ -55,7 +59,7 @@ const ChipInput: React.FC<ChipInputProps> = ({
   };
 
   const handleItemClick = (
-    item: string,
+    item: { name: string; email: string; icon: string },
     index: number,
     getOutOfFocus: boolean
   ) => {
@@ -125,9 +129,7 @@ const ChipInput: React.FC<ChipInputProps> = ({
   };
 
   const handleBlur = () => {
-    // Clear the timeout to prevent hiding the list immediately
     clearTimeout(blurTimeoutRef.current ?? undefined);
-    // Set a short delay before hiding the list to allow selecting an item
     blurTimeoutRef.current = window.setTimeout(() => setFocused(false), 200);
   };
 
@@ -141,13 +143,28 @@ const ChipInput: React.FC<ChipInputProps> = ({
               highlightedIndex === index ? "highlighted" : ""
             }`}
           >
-            {item}
-            <button
-              onClick={() => handleChipRemove(index)}
-              className="remove-button"
+            <div
+              style={{
+                display: "flex",
+                textAlign: "center",
+                alignItems: "center",
+                gap: "15px",
+                fontSize: "10px",
+              }}
             >
-              X
-            </button>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: item.icon,
+                }}
+              />
+              <p>{item.name}</p>
+              <button
+                onClick={() => handleChipRemove(index)}
+                className="remove-button"
+              >
+                X
+              </button>
+            </div>
           </div>
         ))}
         <div>
@@ -166,7 +183,7 @@ const ChipInput: React.FC<ChipInputProps> = ({
             <div className="item-list">
               {availableItems
                 .filter((item) =>
-                  item.toLowerCase().includes(inputValue.toLowerCase())
+                  item.name.toLowerCase().includes(inputValue.toLowerCase())
                 )
                 .map((item, index) => (
                   <div
@@ -176,7 +193,24 @@ const ChipInput: React.FC<ChipInputProps> = ({
                       focusedIndex === index ? "focused" : ""
                     }`}
                   >
-                    {item}
+                    <div
+                      style={{
+                        display: "flex",
+                        textAlign: "center",
+                        alignItems: "center",
+                        gap: "15px",
+                      }}
+                    >
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: item.icon,
+                        }}
+                      />
+                      <p style={{ fontSize: "10px" }}>{item.name}</p>
+                      <p style={{ fontSize: "10px", color: "#a6b5bf" }}>
+                        {item.email}
+                      </p>
+                    </div>
                   </div>
                 ))}
             </div>
